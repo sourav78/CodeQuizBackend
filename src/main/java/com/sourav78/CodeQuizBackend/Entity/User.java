@@ -67,7 +67,7 @@ public class User {
         this.email = email;
     }
 
-    public String isPassword() {
+    public String getPassword() {
         return password;
     }
 
@@ -75,8 +75,8 @@ public class User {
         this.password = password;
     }
 
-    public UserRole getRoles() {
-        return roles;
+    public String getRoles() {
+        return roles.toString();
     }
 
     public void setRoles(UserRole roles) {
