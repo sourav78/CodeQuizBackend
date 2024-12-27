@@ -16,7 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public UserDetails loadUserByUsername(String username) throws ResourceNotFoundException {
         User user = userRepo.findByUserName(username);
         if (user != null) {
             return org.springframework.security.core.userdetails.User.builder()

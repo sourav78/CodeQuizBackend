@@ -4,11 +4,14 @@ import io.jsonwebtoken.JwtException;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
 
     //Handle Resource already exist exception
     @ExceptionHandler(value = {ResourceAlreadyExistException.class})
@@ -52,6 +55,19 @@ public class GlobalExceptionHandler {
         // Create exception object
         CodeQuizException codeQuizException = new CodeQuizException(
                 jwtException.getMessage(),
+                HttpStatus.UNAUTHORIZED
+        );
+
+        return new ResponseEntity<>(codeQuizException, HttpStatus.UNAUTHORIZED);
+    }
+
+    // Handle Auth exceptions
+    @ExceptionHandler(value = {AuthenticationException.class})
+    public ResponseEntity<Object> handleBadCredentialException(AuthenticationException exception){
+
+        // Create exception object
+        CodeQuizException codeQuizException = new CodeQuizException(
+                "Invalid credentials. Please check your credentials",
                 HttpStatus.UNAUTHORIZED
         );
 

@@ -1,6 +1,7 @@
 package com.sourav78.CodeQuizBackend.Utils;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import java.util.Map;
 @Component
 public class JWTUtils {
 
-    private String SECRET_KEY = "TaK+HaV^uvCHEFsEVfypW#7g9^k*Z8$V";
+    private final String SECRET_KEY = "TaK+HaV^uvCHEFsEVfypW#7g9^k*Z8$V";
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
@@ -29,11 +30,19 @@ public class JWTUtils {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (Exception e) {
+            if(e.getMessage().startsWith("JWT expired")){
+                throw new JwtException("JWT token has expired");
+            } else {
+                throw new JwtException("JWT token is invalid");
+            }
+        }
     }
 
     private Boolean isTokenExpired(String token) {
@@ -58,7 +67,9 @@ public class JWTUtils {
     }
 
     public Boolean validateToken(String token) {
-        System.out.println("Token: " + token);
-        return !isTokenExpired(token);
+        if (isTokenExpired(token)) {
+            throw new JwtException("JWT token has expired");
+        }
+        return true;
     }
 }
