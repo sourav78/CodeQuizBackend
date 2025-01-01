@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin
 public class AuthController {
 
 
@@ -61,11 +62,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user) {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
-            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserName());
-            String jwt = jwtUtil.generateToken(userDetails.getUsername());
-            return ResponseHandler.responseBuilder("Login successfully", HttpStatus.OK, jwt);
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserName());
+        String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        return ResponseHandler.responseBuilder("Login successfully", HttpStatus.OK, jwt);
     }
 
 }
