@@ -21,25 +21,18 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private UserRole roles = UserRole.USER;
-
-    private String bio;
-
-    private String profilePic;
+    private boolean isAdmin = false;
 
     private boolean isVerified = false;
 
     public User() {
     }
 
-    public User(String userName, String email, String password, UserRole roles, String bio, String profilePic, boolean isVerified) {
+    public User(String userName, String email, String password, boolean isAdmin, boolean isVerified) {
         this.userName = userName;
         this.email = email;
         this.password = password;
-        this.roles = roles;
-        this.bio = bio;
-        this.profilePic = profilePic;
+        this.isAdmin = isAdmin;
         this.isVerified = isVerified;
     }
 
@@ -75,28 +68,12 @@ public class User {
         this.password = password;
     }
 
-    public String getRoles() {
-        return roles.toString();
+    public boolean getRoles() {
+        return isAdmin;
     }
 
-    public void setRoles(UserRole roles) {
-        this.roles = roles;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public String getProfilePic() {
-        return profilePic;
-    }
-
-    public void setProfilePic(String profilePic) {
-        this.profilePic = profilePic;
+    public void setRoles(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public boolean isVerified() {
@@ -114,9 +91,7 @@ public class User {
                 ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
                 ", password=" + password +
-                ", roles=" + roles +
-                ", bio='" + bio + '\'' +
-                ", profilePic='" + profilePic + '\'' +
+                ", isAdmin=" + isAdmin + '\'' +
                 ", isVerified=" + isVerified +
                 '}';
     }
