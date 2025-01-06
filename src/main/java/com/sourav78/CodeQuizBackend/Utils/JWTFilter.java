@@ -1,6 +1,7 @@
 package com.sourav78.CodeQuizBackend.Utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sourav78.CodeQuizBackend.Services.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +27,9 @@ public class JWTFilter extends OncePerRequestFilter {
     private UserDetailsService userDetailsService;
 
     @Autowired
+    private UserDetailsServiceImpl userDetailsServiceImpl;
+
+    @Autowired
     private JWTUtils jwtUtil;
 
     @Override
@@ -33,10 +37,12 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
+        Long userId = null;
         try {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7);
                 username = jwtUtil.extractUsername(jwt);
+                userId = jwtUtil.extractUserId(jwt);
             }else {
                 if(request.getRequestURI().startsWith("/api/auth")){
                     chain.doFilter(request, response);
@@ -45,11 +51,14 @@ public class JWTFilter extends OncePerRequestFilter {
                 throw new Exception("Please Provide Authorization Header");
             }
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = userDetailsServiceImpl.loadUserById(userId); // Load user by userId
                 if (jwtUtil.validateToken(jwt)) {
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(auth);
+
+                    request.setAttribute("userId", userId); // Set userId as an attribute in the request
                 }
             }
             chain.doFilter(request, response);

@@ -65,7 +65,8 @@ public class AuthController {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserName());
-        String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        long userId = userDetailsService.getUserIdByUsername(user.getUserName());
+        String jwt = jwtUtil.generateToken(userDetails.getUsername(), userId);
         return ResponseHandler.responseBuilder("Login successfully", HttpStatus.OK, jwt);
     }
 

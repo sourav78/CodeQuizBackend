@@ -1,5 +1,6 @@
 package com.sourav78.CodeQuizBackend.Controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -7,7 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 public class UserController {
     @RequestMapping("")
-    public String hello() {
-        return "Hello From user side";
+    public String hello(HttpServletRequest request) {
+        long userId = (long) request.getAttribute("userId");
+        return "Hello From user side" + userId;
     }
 }

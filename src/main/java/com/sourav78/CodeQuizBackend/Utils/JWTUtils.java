@@ -20,9 +20,16 @@ public class JWTUtils {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
+    // Extract Username from JWT token
     public String extractUsername(String token) {
         Claims claims = extractAllClaims(token);
         return claims.getSubject();
+    }
+
+//    Extract User Id from JWT token
+    public Long extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("userId", Long.class);
     }
 
     public Date extractExpiration(String token) {
@@ -49,8 +56,9 @@ public class JWTUtils {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(String username, Long userId) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
         return createToken(claims, username);
     }
 
@@ -61,7 +69,7 @@ public class JWTUtils {
                 .header().empty().add("typ","JWT")
                 .and()
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5)) // 5 minutes expiration time
+                .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365 )) // 1 year expiration time
                 .signWith(getSigningKey())
                 .compact();
     }
