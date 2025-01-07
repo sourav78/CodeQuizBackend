@@ -41,22 +41,29 @@ public class AuthController {
     // Health Check API
     @GetMapping("/health")
     public ResponseEntity<Object> health(@RequestParam String flag) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userName = authentication.getName();
 
         if(flag.equals("give")){
             throw new RuntimeException("Custom Error");
         }
 
-        return ResponseHandler.responseBuilder("CodeQuiz Backend is Up and Running"+userName, HttpStatus.OK, null);
+        return ResponseHandler.responseBuilder("CodeQuiz Backend is Up and Running", HttpStatus.OK, null);
 
     }
 
     // Register API
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody User user) {
-        String response = authService.register(user);
-        return ResponseHandler.responseBuilder(response, HttpStatus.OK, null);
+
+        // Register the user and get the saved user
+        User savedUser = authService.register(user);
+
+        // Generate JWT token using saved user
+        String jwt = jwtUtil.generateToken(savedUser.getUserName(), savedUser.getId());
+
+        // Return success message with JWT token
+        return ResponseHandler.responseBuilder("User Registered Successfully", HttpStatus.OK, jwt);
     }
 
 

@@ -18,12 +18,16 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     private boolean isAdmin = false;
 
     private boolean isVerified = false;
+
+    // User Info Mapping
+    @OneToOne(mappedBy = "user")
+    private UserInfo userInfo;
 
     public User() {
     }
@@ -82,6 +86,14 @@ public class User {
 
     public void setVerified(boolean verified) {
         isVerified = verified;
+    }
+
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
 
     @Override

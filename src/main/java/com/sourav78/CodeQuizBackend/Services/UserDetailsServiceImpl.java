@@ -29,6 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         throw new ResourceNotFoundException("User not found with username: " + username);
     }
 
+    // Load user by userId
     public UserDetails loadUserById(Long userId) throws ResourceNotFoundException {
         User user = userRepo.findById(userId).orElse(null);
         if (user != null) {

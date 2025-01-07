@@ -19,7 +19,7 @@ public class AuthService {
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // Register user service
-    public String register(User user){
+    public User register(User user){
 
         // Check if user already exists by username
         User existUserByUsername = userRepo.findByUserName(user.getUserName());
@@ -42,9 +42,9 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // Save the user in DB
-        userRepo.save(user);
+        User savedUser = userRepo.save(user);
 
         // Return success message
-        return "User registered successfully";
+        return savedUser;
     }
 }
