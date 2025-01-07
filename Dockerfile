@@ -28,10 +28,10 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copy the JAR file from the builder image
-COPY --from=build /app/target/CodeQuizBackend-0.0.2.jar .
+COPY --from=build /app/target/CodeQuizBackend-0.0.4-onboard-t.jar .
 
 #Expose the port
 EXPOSE 8080
 
 #Specify the command to run the application
-CMD ["java", "-jar", "/app/CodeQuizBackend-0.0.2.jar"]
+CMD ["java", "-jar", "/app/CodeQuizBackend-0.0.4-onboard-t.jar"]

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.sourav78</groupId>
 	<artifactId>CodeQuizBackend</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.4-onboard-t</version>
 	<name>CodeQuizBackend</name>
 	<description>This is the Backend application for CodeQuiz Project</description>
 	<url/>
