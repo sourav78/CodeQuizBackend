@@ -1,6 +1,8 @@
 package com.sourav78.CodeQuizBackend.Utils;
 
 public class EmailTemplate {
+
+    // Email Template for verification code
     public static String getVerificationEmailTemplate(String verificationCode) {
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +

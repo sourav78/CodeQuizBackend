@@ -6,6 +6,7 @@ import com.sourav78.CodeQuizBackend.Repository.UserRepo;
 import com.sourav78.CodeQuizBackend.Utils.OtpGenerator;
 import com.sourav78.CodeQuizBackend.Utils.Validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -63,4 +64,48 @@ public class AuthService {
         // Return success message
         return savedUser;
     }
+
+    // Verify user
+    public void verifyUser(String email, String verificationCode) {
+        //Find user by email
+        User user = userRepo.findByEmail(email);
+        if(user == null){
+            throw new BadCredentialsException("User not found");
+        }
+
+        //Compare the verification code
+        if(user.getVerificationCode().equals(verificationCode)){
+            user.setVerified(true);
+            user.setVerificationCode(null);
+
+            //Save the verification Status
+            userRepo.save(user);
+        }else{
+            throw new BadCredentialsException("Invalid Verification Code");
+        }
+    }
+
+    // Resend verification code
+    public void resendVerificationCode(String email) {
+        //Find user by email
+        User user = userRepo.findByEmail(email);
+
+        //Check if user exists
+        if(user == null){
+            throw new BadCredentialsException("User not found");
+        }
+
+        //Check if user is already verified
+        if(user.isVerified()){
+            throw new BadCredentialsException("User is already verified");
+        }
+
+        // Generate verification code
+        user.setVerificationCode(OtpGenerator.generateOTP(6));
+        userRepo.save(user);
+
+        //Send a mail to the user with the verification code
+        emailService.sendVerificationMail(user.getEmail(), "Verification Code", user.getVerificationCode());
+    }
+
 }

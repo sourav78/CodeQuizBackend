@@ -68,6 +68,7 @@ public class AuthController {
     }
 
 
+    // Login API
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user) {
         authenticationManager.authenticate(
@@ -82,6 +83,31 @@ public class AuthController {
         long userId = userDetailsService.getUserIdByUsername(user.getUserName());
         String jwt = jwtUtil.generateToken(userDetails.getUsername(), userId);
         return ResponseHandler.responseBuilder("User login successfully", HttpStatus.OK, jwt);
+    }
+
+    // Verify User API
+    @PostMapping("/verify")
+    public ResponseEntity<Object> verifyUser(@RequestBody User user) {
+        authService.verifyUser(user.getEmail(), user.getVerificationCode());
+        return ResponseHandler.responseBuilder("User Verified Successfully", HttpStatus.OK, null);
+    }
+
+    // Resend Verification Code API
+    @GetMapping("/resend-verification")
+    public ResponseEntity<Object> resendVerification(@RequestParam String email) {
+
+        //Check if email is empty
+        if(email == null || email.isEmpty()){
+            throw new BadCredentialsException("Email is required");
+        }
+        // Resend verification code
+        authService.resendVerificationCode(email);
+
+        return ResponseHandler.responseBuilder(
+                "Verification code sent successfully",
+                HttpStatus.OK,
+                null
+        );
     }
 
 }
