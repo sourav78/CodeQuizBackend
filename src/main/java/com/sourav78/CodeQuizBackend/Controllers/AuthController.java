@@ -5,6 +5,7 @@ import com.sourav78.CodeQuizBackend.Services.AuthService;
 import com.sourav78.CodeQuizBackend.Services.UserDetailsServiceImpl;
 import com.sourav78.CodeQuizBackend.Utils.JWTUtils;
 import com.sourav78.CodeQuizBackend.Utils.ResponseHandler;
+import com.sourav78.CodeQuizBackend.Utils.Validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +54,8 @@ public class AuthController {
 
     }
 
+    //Authentication Apis
+
     // Register API
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody User user) {
@@ -85,9 +88,15 @@ public class AuthController {
         return ResponseHandler.responseBuilder("User login successfully", HttpStatus.OK, jwt);
     }
 
+    // Email Verification APIs
+
     // Verify User API
     @PostMapping("/verify")
     public ResponseEntity<Object> verifyUser(@RequestBody User user) {
+
+        //Validation for email and verification code
+        UserValidator.validateEmailVerification(user);
+
         authService.verifyUser(user.getEmail(), user.getVerificationCode());
         return ResponseHandler.responseBuilder("User Verified Successfully", HttpStatus.OK, null);
     }
@@ -108,6 +117,34 @@ public class AuthController {
                 HttpStatus.OK,
                 null
         );
+    }
+
+
+    // Forgot Password APIs
+
+    // Forgot Password Verification API
+    @GetMapping("/password-verify")
+    public ResponseEntity<Object> sendVerificationCode(@RequestParam String email) {
+
+        //Check if email is empty
+        if(email == null || email.isEmpty()){
+            throw new BadCredentialsException("Email is required");
+        }
+
+        // Send password reset verification code
+        authService.sendPasswordVerificationCode(email);
+
+        return ResponseHandler.responseBuilder("Password reset code sent to your email", HttpStatus.OK, null);
+    }
+
+    // Reset Password API
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Object> forgotPassword(@RequestBody User user){
+
+        // Check verification code and reset password
+        authService.resetPassword(user);
+
+        return ResponseHandler.responseBuilder("Password reset successfully", HttpStatus.OK, null);
     }
 
 }

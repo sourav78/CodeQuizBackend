@@ -74,7 +74,7 @@ public class AuthService {
         }
 
         //Compare the verification code
-        if(user.getVerificationCode().equals(verificationCode)){
+        if(user.getVerificationCode() != null && user.getVerificationCode().equals(verificationCode)){
             user.setVerified(true);
             user.setVerificationCode(null);
 
@@ -108,4 +108,56 @@ public class AuthService {
         emailService.sendVerificationMail(user.getEmail(), "Verification Code", user.getVerificationCode());
     }
 
+    // Forgot Password Verification API
+    public void sendPasswordVerificationCode(String email){
+        //Find user by email
+        User user = userRepo.findByEmail(email);
+
+        //Check if user exists
+        if(user == null){
+            throw new BadCredentialsException("Email is not found");
+        }
+
+        // Generate verification code
+        user.setVerificationCode(OtpGenerator.generateOTP(6));
+        userRepo.save(user);
+
+        //Send a mail to the user with the verification code
+        emailService.sendVerificationMail(user.getEmail(), "Verification Code", user.getVerificationCode());
+    }
+
+    // Reset Password service
+    public void resetPassword(User user) {
+
+        // Validate required fields
+        UserValidator.validatePasswordReset(user);
+
+        //Find user by email
+        User userFromDB = userRepo.findByEmail(user.getEmail());
+
+        //Check if user exists
+        if(userFromDB == null){
+            throw new BadCredentialsException("Email is not found");
+        }
+
+        //Compare the verification code
+        if(userFromDB.getVerificationCode() != null && userFromDB.getVerificationCode().equals(user.getVerificationCode())){
+
+            //Check if the new password is same as the old password
+            boolean isPasswordSame = passwordEncoder.matches(user.getPassword(), userFromDB.getPassword());
+
+            if(isPasswordSame){
+                throw new BadCredentialsException("New password cannot be the same as the old password");
+            }
+
+            // Encode the password
+            userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
+            userFromDB.setVerificationCode(null);
+
+            //Save the new password
+            userRepo.save(userFromDB);
+        }else{
+            throw new BadCredentialsException("Invalid Verification Code");
+        }
+    }
 }

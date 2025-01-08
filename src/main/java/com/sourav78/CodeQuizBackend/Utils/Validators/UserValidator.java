@@ -28,4 +28,31 @@ public class UserValidator {
             throw new MissingFieldException("Please Select your Country");
         }
     }
+
+    public static void validateEmailVerification(User user){
+        if(user.getEmail() == null || user.getEmail().isEmpty()){
+            throw new MissingFieldException("Please provide email");
+        }
+        if(user.getVerificationCode() == null || user.getVerificationCode().isEmpty()){
+            throw new MissingFieldException("Please provide verification code");
+        }
+        if(user.getVerificationCode().length() != 6){
+            throw new MissingFieldException("Verification code must be 6 digits");
+        }
+    }
+
+    public static void validatePasswordReset(User user){
+        if(user.getEmail() == null || user.getEmail().isEmpty()){
+            throw new MissingFieldException("Please provide email");
+        }
+        if(user.getVerificationCode() == null || user.getVerificationCode().isEmpty()){
+            throw new MissingFieldException("Please provide verification code");
+        }
+        if(user.getVerificationCode().length() != 6){
+            throw new MissingFieldException("Verification code must be 6 digits");
+        }
+        if(user.getPassword() == null || user.getPassword().isEmpty()){
+            throw new MissingFieldException("Please provide new password");
+        }
+    }
 }
