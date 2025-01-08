@@ -25,6 +25,8 @@ public class User {
 
     private boolean isVerified = false;
 
+    private String verificationCode;
+
     // User Info Mapping
     @OneToOne(mappedBy = "user")
     private UserInfo userInfo;
@@ -32,12 +34,13 @@ public class User {
     public User() {
     }
 
-    public User(String userName, String email, String password, boolean isAdmin, boolean isVerified) {
+    public User(String userName, String email, String password, boolean isAdmin, boolean isVerified, String verificationCode) {
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
         this.isVerified = isVerified;
+        this.verificationCode = verificationCode;
     }
 
     public Long getId() {
@@ -96,6 +99,14 @@ public class User {
         this.userInfo = userInfo;
     }
 
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -105,6 +116,7 @@ public class User {
                 ", password=" + password +
                 ", isAdmin=" + isAdmin + '\'' +
                 ", isVerified=" + isVerified +
+                ", verificationCode=" + verificationCode +
                 '}';
     }
 }

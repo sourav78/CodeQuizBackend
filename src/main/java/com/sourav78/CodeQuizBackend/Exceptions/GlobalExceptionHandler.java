@@ -1,10 +1,8 @@
 package com.sourav78.CodeQuizBackend.Exceptions;
 
 import io.jsonwebtoken.JwtException;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -67,7 +65,7 @@ public class GlobalExceptionHandler {
 
         // Create exception object
         CodeQuizException codeQuizException = new CodeQuizException(
-                "Invalid credentials. Please check your credentials",
+                exception.getClass().getSimpleName().equals("BadCredentialsException") ? exception.getMessage() : "Invalid credentials. Please check your credentials",
                 HttpStatus.UNAUTHORIZED
         );
 
