@@ -46,6 +46,10 @@ public class AuthController {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        String userName = authentication.getName();
 
+       System.out.println("Health Ping at: " + java.time.LocalDateTime.now().format(
+               java.time.format.DateTimeFormatter.ISO_DATE_TIME
+       ));
+
         if(flag.equals("give")){
             throw new RuntimeException("Custom Error");
         }
